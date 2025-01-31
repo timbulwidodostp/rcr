@@ -1,0 +1,75 @@
+{smcl}
+{* 01Jul2022}{...}
+{cmd:help rcr postestimation}{right:also see:  {helpb rcr}{space 19}}
+{hline}
+
+{title:Title}
+
+{p2colset 5 30 37 2}{...}
+{p2col :{hi:rcr postestimation} {hline 2}}Postestimation tools for rcr{p_end}
+{p2colreset}{...}
+
+
+{title:Description}
+
+{pstd}
+The following postestimation commands are of special interest after {cmd:rcr}: 
+
+{synoptset 17}{...}
+{p2coldent :command}description{p_end}
+{synoptline}
+{synopt :{helpb rcrplot:rcrplot}}Graph for linear regression with relative correlation restrictions{p_end}
+{synopt :{helpb test_betax:test_betax}}Hypothesis tests on causal parameter (betax){p_end}
+INCLUDE help post_nlcom
+INCLUDE help post_testnl
+INCLUDE help post_estimates
+{synopt :{helpb estat:estat}}(only {cmd: estat vce} and {cmd: estat summarize}){p_end}
+
+{synoptline}
+{pstd}
+The following postestimation commands will only work in some cases after {cmd:rcr}: 
+
+{synoptset 17}{...}
+{p2coldent :command}description{p_end}
+{synoptline}
+INCLUDE help post_test
+INCLUDE help post_lincom
+
+{pstd}
+This is caused by a bug/feature in Stata: Stata's ado-files for {cmd: test} and {cmd: lincom}
+expect all model parameters to correspond to variables in the active data set; for example,
+if there is a model parameter called betax, it will look for a variable called betax.
+If such a variable does not exist, then Stata will (sometimes) produce an error message.
+
+{pstd}
+There are two ways of working around this.  One is to create a variable named (in our
+example) betax.  The other way is to simply use {help testnl} instead 
+of {help test}, and {help nlcom} instead of {help lincom}.
+
+
+{synoptline}
+{p2colreset}{...}
+
+{pstd}
+The following standard postestimation commands {bf:do not} apply to the RCR model: 
+
+{synoptset 17}{...}
+{p2coldent :command}description{p_end}
+{synoptline}
+INCLUDE help post_adjust1
+{synopt :{helpb estat:estat}}({cmd: estat ic} only){p_end}
+INCLUDE help post_hausman
+INCLUDE help post_linktest
+INCLUDE help post_lrtest
+INCLUDE help post_mfx
+INCLUDE help post_suest
+INCLUDE help post_predictnl
+{synopt :{helpb regress postestimation##predict:predict}}predictions,residuals, influence statistics, and other diagnostic measures{p_end} 
+
+
+{title:Also see}
+
+{psee}
+Online:  {helpb rcr},
+{helpb estimates}
+{p_end}

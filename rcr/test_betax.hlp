@@ -1,0 +1,73 @@
+{smcl}
+{* 01Jul2022}{...}
+{cmd:help test_betax}{right:also see:  {helpb rcr}}
+{hline}
+
+{title:Title}
+
+{p2colset 5 30 37 2}{...}
+{p2col :{hi: test_betax} {hline 2}}Hypothesis test for linear regression with relative correlation restrictions{p_end}
+{p2colreset}{...}
+
+
+{title:Syntax}
+
+{p 8 16 2}
+{cmd: test_betax} [{opt = }{it: exp}]
+
+{p 4 6 2}
+
+{title:Description}
+
+{pstd}
+{cmd:test_betax} can be used to perform hypothesis tests on the causal effect (betax) parameter in Krauth (2016).  
+The specific testing method used here is to "invert" the Imbens-Manski confidence interval.  That is we reject the null that betax equals 
+some number at x% significance if and only if that number is not in the Imbens-Manski (100-x)% confidence interval.  This test inherits
+the desirable properties of the Imbens-Manski confidence interval. 
+{p_end}
+
+{pstd}
+{it: exp} can be any expression that evaluates to a number.
+{p_end}
+
+{pstd}
+This command is a postestimation command for {help rcr}.
+{p_end}
+
+{title:Examples:}
+
+{pstd}Setup{p_end}
+{phang2}{cmd:. use "http://www.sfu.ca/~bkrauth/code/rcr_example.dta", clear}{p_end}
+{phang2}{cmd:. rcr SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree}{p_end}
+
+{pstd}If {cmd: test_betax} is executed without arguments, the test will be of betax = 0. {p_end}
+{phang2}{cmd:. test_betax}{p_end}
+
+{pstd}Other null hypotheses can be specified explicitly.{p_end}
+{phang2}{cmd:. test_betax  = 5}{p_end}
+
+{marker results}{...}
+{title:Stored results}
+
+{pstd}
+{cmd:test_betax} stores the following in {cmd:r()}:
+
+{synoptset 20 tabbed}{...}
+{p2col 5 20 24 2: Scalars}{p_end}
+{synopt:{cmd:r(p)}}p-value of test{p_end}
+
+{pstd}
+There is no conventional test statistic since the test is constructed by inverting
+the confidence interval.
+{p_end}
+
+{title:Also see}
+
+{psee}
+Krauth, Brian V. "Bounding a linear causal effect using relative correlation
+restrictions." Journal of Econometric Methods, 2016.  Working paper version available 
+at {browse "http://www.sfu.ca/~bkrauth/papers/rcr.pdf" : http://www.sfu.ca/~bkrauth/papers/rcr.pdf}
+
+{psee}
+Online:  {help rcr postestimation}
+{p_end}

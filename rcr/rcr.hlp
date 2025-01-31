@@ -1,0 +1,226 @@
+{smcl}
+{* 01Jul2022}{...}
+{cmd:help rcr}{right:also see:  {helpb rcr postestimation}, {helpb rcr_config}}
+{hline}
+
+{title:Title}
+
+{p2colset 5 15 22 2}{...}
+{p2col :{hi: rcr} {hline 2}}Linear regression with relative correlation restrictions{p_end}
+{p2colreset}{...}
+
+{title:Syntax}
+
+{p 8 16 2}
+{opt rcr} {depvar} {it : {help varname: treatmentvar}} {it: {help varlist : controlvars}} {ifin} {weight}[{cmd:,} {it:options}]
+
+{synoptset 20 tabbed}{...}
+{synopthdr}
+{synoptline}
+{syntab:Model}
+{synopt :{opth lambda(numlist)}}set the interval for the sensitivity parameter lambda; default is {cmd:lambda(0 1)}{p_end}
+
+
+{syntab:SE}
+{synopt :{opth cl:uster(varname)}}adjust standard errors for intragroup correlation{p_end}
+{synopt :{opt vceadj(#)}}the estimated variance-covariance matrix will be multiplied by #; default is {cmd: vceadj(1)}.  {p_end}
+
+
+{syntab:Reporting}
+{synopt :{opt l:evel(#)}}set confidence level; default is {cmd:level(95)}{p_end}
+{synopt :{opt citype(string)}}set the method to calculate confidence interval;default is {cmd:citype(conservative)}{p_end}
+{synopt :{opt det:ails}}save details in memory to create plots, overwrites current data set{p_end}
+
+{synoptline}
+
+{p 4 6 2}
+{cmd:aweight}s, {cmd:fweight}s, {cmd:iweight}s, and {cmd:pweight}s are allowed; see {help weight}.{p_end}
+{p 4 6 2}
+See {help rcr postestimation} for additional capabilities and estimation commands.{p_end}
+
+{title:Description}
+
+{pstd}
+{cmd:rcr} estimates the effect of {it: treatmentvar} on {it: depvar} under an interval restrition on the correlation
+between {it: treatmentvar} and the unobserved term relative to the correlation between {it: treatmentvar} and the
+{it: controlvars}. The estimator is described in Krauth (2016).  
+
+{pstd}
+Limitations:
+
+{phang2}
+(1) The minimum number of control variables is 1. The maximum number of control variables is 
+	floor(sqrt(c(max_matsize)))-3), which works out to 25 for Stata BE/IC and 101 for Stata SE/MP.
+{p_end}
+
+{phang2}
+(2) Both infinity and -infinity can be valid parameter estimates in this model, but Stata does not 
+support the reporting of infinite values.  As a result infinity is reported as a very large positive 
+number (9.0e306) and -infinity is reported as a very large negative number (-9.0e306))
+{p_end}
+
+{phang2}
+(3) In some cases, a parameter estimate is undefined (i.e., it is 0/0).  In this case, it will be 
+listed as "(dropped)" in keeping with Stata's convention for unidentified regression coefficients.
+{p_end}
+
+{pstd}
+Note that these limitations are all due to limitations in Stata itself, and can be avoided by
+using the full Python package RCRBOUNDS, available at
+{browse "https://github.com/bvkrauth/rcr" : https://github.com/bvkrauth/rcr}.
+
+
+{title:Options}
+
+{dlgtab:Model}
+
+{phang}
+{opth lambda(numlist)} indicates the range of values to allow for the sensitivity parameter lambda.  
+For example {cmd: lambda(3 5)} means that (3 <= lambda <= 5).  The missing value symbol (.) can be used
+to indicate that there is no upper (lower) bound.  For example {cmd: lambda(. 1)} means that
+(-infinity < lambda <= 1) and {cmd: lambda(0 .)} means that (0 <= lambda < infinity).
+{p_end}
+
+{dlgtab:SE}
+
+{phang}
+{opth cluster(varname)};  specifies that the standard errors allow for intragroup correlation, relaxing the usual requirement
+        that the observations be independent.  That is, the observations are independent across groups (clusters) but not
+        necessarily within groups.  {cmd: varname} specifies to which group each observation belongs, e.g., {cmd: cluster(personid)} in
+        data with repeated observations on individuals.  This option affects the standard errors and
+        variance-covariance matrix of the estimators but not the estimated coefficients.  You can also
+		use {cmd:vce(cluster varname)}.
+{p_end}
+
+{phang}
+{opt vceadj(#)}; The estimated variance-covariance matrix of the parameter estimates
+	will be multiplied by this factor.  This feature allows the user to correct standard 
+	errors when the data come from some transformation (e.g., within-transformed panel data) 
+	such that the number of	observations overstates the true degrees of freedom in the data.
+{p_end}
+
+{dlgtab:Reporting}
+
+{phang}
+{opt level(#)}; see {help estimation options##level():estimation options}.
+{p_end}
+
+{phang}
+{opt citype(string)} indicates the type of confidence interval to calculate for the parameter of interest (betax). Current options are:
+{p_end}
+
+{synopt: {bf:"conservative"}}: A single confidence interval for the *set* (betax_L,betax_H).  This is calculated 
+by taking the lower bound of the confidence interval for betax_L and the upper bound of the confidence interval 
+for betax_H, and can also  be interpreted as a conservative confidence interval for the true value of betax. {p_end}
+{synopt: {bf:"imbens-manski"}}: A confidence interval for the true value of betax.  Unlike the "conservative" method,
+it takes into account the width of the identified  set.  It is defined in Imbens and Manski (Econometrica 2004),
+equations (6) and (7).{p_end}
+{synopt: {bf:"lower"}}: A one-tailed lower confidence interval for betax_H.  {p_end}
+{synopt: {bf:"upper"}}: A one-tailed upper confidence interval for betax_L.  {p_end}
+
+{phang}
+{opt details} indicates that a plot of the lambda(betax) function should be created, and the necessary
+	information to recreate that plot be saved in memory.  Note that this will overwrite the current 
+	data set.  The default plot may be improved upon by using the {help rcrplot} postestimation command.
+{p_end}
+
+{dlgtab:Advanced options}
+
+{phang}
+{opt exe(string)} specifies explicitly which external program to use.  Options include
+{cmd: python}, {cmd: windows-fortran}, and {cmd: unix-fortran}.  If not provided, an
+appropriate default will be chosen; see Technical notes below.
+{p_end}
+
+{title:Technical notes}
+
+{pstd}
+The Stata rcr command is a wrapper for an external program written in Python or Fortran. The Python version
+is the currently-supported one, but the older Fortran version is also provided for those using an older
+version of Stata (< version 16) that does not support Python, or who do not have a suitable Python installation
+available.  The command will automatically choose the executable version based on your setup, but you can:
+{p_end}
+
+{phang2}
+Check your configuration with the {help rcr_config} command.
+{p_end}
+
+{phang2}
+Force a particular version with the {cmd: exe} optional argument (see above).
+{p_end}
+
+{title:Examples:}
+
+{pstd}Setup{p_end}
+{phang2}{cmd:. use "http://www.sfu.ca/~bkrauth/code/rcr_example.dta", clear}{p_end}
+
+{pstd}An ordinary regression for comparison{p_end}
+{phang2}{cmd:. reg SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree}{p_end}
+
+{pstd}Basic usage with default options{p_end}
+{phang2}{cmd:. rcr SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree}{p_end}
+
+{pstd}Choosing the range of relative correlations (lambda){p_end}
+{phang2}{cmd:. rcr SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree, lambda(0 0.1)}{p_end}
+{phang2}{cmd:. rcr SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree, lambda(0 .)}{p_end}
+{phang2}(Note: for this case, the identified set is (-infty,infty) which is displayed as [-9.0e306, 9.0e306]){p_end}
+
+{pstd}Imbens-Manski confidence interval{p_end}
+{phang2}{cmd:. rcr SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree, citype("Imbens-Manski")}{p_end}
+
+{pstd}90% confidence interval{p_end}
+{phang2}{cmd:. rcr SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree, level(90)}{p_end}
+
+{pstd}Clustered standard errors{p_end}
+{phang2}{cmd:. rcr SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree, cluster(TCHID)}{p_end}
+
+{marker results}{...}
+{title:Stored results}
+
+{pstd}
+{cmd:rcr} stores the following in {cmd:e()}:
+
+{synoptset 20 tabbed}{...}
+{p2col 5 20 24 2: Scalars}{p_end}
+{synopt:{cmd:e(N)}}number of observations{p_end}
+{synopt:{cmd:e(lambdaL)}}lower bound for lambda{p_end}
+{synopt:{cmd:e(lambdaH)}}upper bound for lambda{p_end}
+{synopt:{cmd:e(cilevel)}}level for confidence interval{p_end}
+{synopt:{cmd: e(betaxCI_L)}}lower bound of confidence interval for betax{p_end}
+{synopt:{cmd: e(betaxCI_H)}}upper bound of confidence interval for betax{p_end}
+{synopt:{cmd:e(N_clust)}}number of clusters (if {cmd:cluster} option used){p_end}
+
+{synoptset 20 tabbed}{...}
+{p2col 5 20 24 2: Macros}{p_end}
+{synopt:{cmd:e(cmd)}}{cmd:rcr}{p_end}
+{synopt:{cmd:e(vcetype)}}{cmd:cluster} (if {cmd:cluster} option used){p_end}
+{synopt:{cmd:e(clustvar)}}name of cluster variable (if {cmd:cluster} option used){p_end}
+{synopt:{cmd:e(citype)}}confidence interval type ({cmd:conservative}, {cmd:imbens-manski}, {cmd:lower}, or {cmd:upper}){p_end}
+{synopt:{cmd:e(ctrlvar)}}list of control variables{p_end}
+{synopt:{cmd:e(treatvar)}}name of treatment variable{p_end}
+{synopt:{cmd:e(depvar)}}name of dependent variable{p_end}
+{synopt:{cmd:e(predict)}}{cmd:rcr_predict}{p_end}
+{synopt:{cmd:e(estat_cmd)}}{cmd:rcr_estat}{p_end}
+{synopt:{cmd:e(title)}}{cmd:RCR model}{p_end}
+{synopt:{cmd:e(properties)}}{cmd:b V}{p_end}
+
+{synoptset 20 tabbed}{...}
+{p2col 5 20 24 2: Matrices}{p_end}
+{synopt:{cmd:e(b)}}coefficient vector{p_end}
+{synopt:{cmd:e(V)}}variance-covariance matrix of the estimators{p_end}
+
+{synoptset 20 tabbed}{...}
+{p2col 5 20 24 2: Functions}{p_end}
+{synopt:{cmd:e(sample)}}marks estimation sample{p_end}
+{p2colreset}{...}
+
+{title:Also see}
+
+{psee}
+Krauth, Brian V. "Bounding a linear causal effect using relative correlation
+restrictions."  Journal of Econometric Methods, 2016.  Working paper version available 
+at {browse "http://www.sfu.ca/~bkrauth/papers/rcr.pdf" : http://www.sfu.ca/~bkrauth/papers/rcr.pdf}
+
+{psee}
+Online:  {help rcr postestimation}
+{p_end}

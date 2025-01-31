@@ -1,0 +1,30 @@
+v 3
+d 'RCR': module to estimate RCR (relative correlations restrictions) model from Krauth (2016)
+d
+d Brian Krauth, Simon Fraser University
+d Mohsen Javdani Haji, Simon Fraser University
+d
+d The model is described in the paper 
+d "Bounding a linear causal effect using relative correlation restrictions", Journal of Econometric Methods 2016.
+d
+d Version: 3.00.00
+d Distribution-Date:  01Jul2022
+
+f rcr.ado
+f rcr.hlp
+f rcr_postestimation.hlp
+f rcr_estat.ado
+f rcr_predict.ado
+f rcrplot.ado
+f rcrplot.hlp
+f test_betax.ado
+f test_betax.hlp
+f rcr_config.ado
+f rcr_config.hlp
+f rcrbounds.py
+G WIN rcr.exe
+G WIN64A rcr.exe
+G LINUX64 rcr
+f rcr_example.do
+
+e

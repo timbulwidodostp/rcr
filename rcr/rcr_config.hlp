@@ -1,0 +1,64 @@
+{smcl}
+{* 01Jul2022}{...}
+{cmd:help rcr_config}{right:also see:  {helpb rcr}}
+{hline}
+
+{title:Title}
+
+{p2colset 5 30 37 2}{...}
+{p2col :{hi: rcr_config} {hline 2}}Configuration check for {helpb rcr} command{p_end}
+{p2colreset}{...}
+
+
+{title:Syntax}
+
+{p 8 16 2}
+{cmd: rcr_config} 
+
+{p 4 6 2}
+
+{title:Description}
+
+{pstd}
+{cmd:rcr_config} is a utility command to check whether your system configuration 
+supports the {help rcr} command and to make recommendations for how
+it can be reconfigured to better support it.
+{p_end}
+
+{pstd}
+For background, {cmd:rcr} uses an external program to do most of
+its calculations. The most recent version of that program is
+a Python module, which will be used if you have Stata version 16 or
+higher and have a suitable Python configuration. There is also an
+older executable program written in Fortran that can be used if 
+your system does not meet these requirements and you are running
+Stata for Windows or Stata for Linux. The rcr command is not supported
+in Stata for MacOS versions below 16.
+{p_end}
+
+{pstd}
+{cmd:rcr} will automatically select the best available program,
+but you can run {cmd:rcr_config} to review your configuration and
+fix any problems.
+{p_end}
+
+{marker results}{...}
+{title:Stored results}
+
+{pstd}
+{cmd:rcr_config} stores the following in {cmd:r()}:
+
+{synoptset 20 tabbed}{...}
+{p2col 5 20 24 2: Macros}{p_end}
+{synopt:{cmd:r(default_version)}} The default version of the RCR program that will be used ({cmd:python}, {cmd:windows-fortran}, {cmd:unix-fortran}, or {cmd:none}).{p_end}
+
+{title:Also see}
+
+{psee}
+Krauth, Brian V. "Bounding a linear causal effect using relative correlation
+restrictions." Journal of Econometric Methods, 2016.  Working paper version available 
+at {browse "http://www.sfu.ca/~bkrauth/papers/rcr.pdf" : http://www.sfu.ca/~bkrauth/papers/rcr.pdf}
+
+{psee}
+Online:  {help rcr}
+{p_end}

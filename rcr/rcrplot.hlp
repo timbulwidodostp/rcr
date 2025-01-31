@@ -1,0 +1,70 @@
+{smcl}
+{* 16mar2020}{...}
+{cmd:help rcrplot}{right:also see:  {helpb rcr}}
+{hline}
+
+{title:Title}
+
+{p2colset 5 30 37 2}{...}
+{p2col :{hi: rcrplot} {hline 2}}Graph for linear regression with relative correlation restrictions{p_end}
+{p2colreset}{...}
+
+{title:Syntax}
+
+{p 8 16 2}
+{opt rcrplot} [{cmd:,} {it:options}]
+
+{synoptset 20 tabbed}{...}
+{synopthdr}
+{synoptline}
+{syntab:Range}
+{synopt :{opth xrange(numlist)}}range of values for x-axis (betax); default is {cmd:xrange(-50 50)}{p_end}
+{synopt :{opth yrange(numlist)}}range of values for y-axis (lambda); default is {cmd:yrange(-50 50)}{p_end}
+
+{synoptline}
+
+{p 4 6 2}
+
+{title:Description}
+
+{pstd}
+{cmd:rcrplot} creates graphs similar to Figure 1 in Krauth (2016).  The x-axis of
+the graph is the assumed value for the effect (betax), while the y axis is the implied value
+for the relative correlation parameter (lambda).
+
+{pstd}
+This command is a postestimation command for {help rcr}, and can only be executed 
+if the {cmd:details} option has been specified in {cmd:rcr}.
+{p_end}
+
+{title:Options}
+
+{dlgtab:Range}
+
+{phang}
+{opth xrange(numlist)} indicates the range of values for the x-axis of the graph. 
+
+{phang}
+{opth yrange(numlist)} indicates the range of values for the y-axis of the graph.
+
+{title:Examples:}
+
+{pstd}Setup{p_end}
+{phang2}{cmd:. use "http://www.sfu.ca/~bkrauth/code/rcr_example.dta", clear}{p_end}
+
+{pstd}Generate a plot by adding the {cmd: details} option to the {cmd: rcr} command (note: this changes data in memory){p_end}
+{phang2}{cmd:. rcr SAT Small_Class White_Asian Girl Free_Lunch White_Teacher Teacher_Experience Masters_Degree, details}{p_end}
+
+{pstd}By default, the plot covers a wide range.  You can use {cmd:rcrplot} to adjust/narrow the plot range{p_end}
+{phang2}{cmd:. rcrplot, xrange(0 8) yrange(-5 15)}{p_end}
+
+{title:Also see}
+
+{psee}
+Krauth, Brian V. "Bounding a linear causal effect using relative correlation
+restrictions." Journal of Econometric Methods, 2016.  Working paper version available 
+at {browse "http://www.sfu.ca/~bkrauth/papers/rcr.pdf" : http://www.sfu.ca/~bkrauth/papers/rcr.pdf}
+
+{psee}
+Online:  {help rcr postestimation}
+{p_end}
