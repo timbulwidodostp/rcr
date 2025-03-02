@@ -1,6 +1,8 @@
 # rcr
 Linear regression with relative correlation restrictions (RCR) model Use rcr With STATA 18
 
+https://www.youtube.com/watch?v=lx63R1-I4ds
+
 Olah Data Semarang
 
 WA : +6285227746673 (085227746673)
